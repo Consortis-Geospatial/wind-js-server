@@ -12,6 +12,7 @@ var baseDir ='http://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl';
 
 // cors config
 var whitelist = [
+	'http://localhost',
 	'http://localhost:63342',
 	'http://localhost:3000',
 	'http://localhost:4000',
@@ -150,7 +151,9 @@ function getGribData(targetMoment){
             return;
         }
 
+		var stamp1 = moment(targetMoment).format('YYYYMMDD') + '/' + roundHours(moment(targetMoment).hour(), 6);
 		var stamp = moment(targetMoment).format('YYYYMMDD') + roundHours(moment(targetMoment).hour(), 6);
+		console.log('stamp: ' + stamp);
 		request.get({
 			url: baseDir,
 			qs: {
@@ -164,7 +167,7 @@ function getGribData(targetMoment){
 				rightlon: 360,
 				toplat: 90,
 				bottomlat: -90,
-				dir: '/gfs.'+stamp
+				dir: '/gfs.'+stamp1
 			}
 
 		}).on('error', function(err){
@@ -217,7 +220,7 @@ function convertGribToJson(stamp, targetMoment){
 
 	var exec = require('child_process').exec, child;
 
-	child = exec('converter/bin/grib2json --data --output json-data/'+stamp+'.json --names --compact grib-data/'+stamp+'.f000',
+	child = exec('converter\\bin\\grib2json --data --output json-data/'+stamp+'.json --names --compact grib-data/'+stamp+'.f000',
 		{maxBuffer: 500*1024},
 		function (error, stdout, stderr){
 
