@@ -154,7 +154,7 @@ function getGribData(targetMoment) {
 
   function runQuery(targetMoment) {
     // only go 2 weeks deep
-    if (moment.utc().diff(targetMoment, 'days') > 1) {
+    if (moment.utc().diff(targetMoment, 'days') > 10) {
       console.log('hit limit, harvest complete or there is a big gap in data..');
       return;
     }
@@ -180,11 +180,9 @@ function getGribData(targetMoment) {
         },
       })
       .on('error', function (err) {
-        // console.log(err);
         runQuery(moment(targetMoment).subtract(6, 'hours'));
       })
       .on('response', function (response) {
-        console.warn('gggggg', response.request.href);
         console.log('response ' + response.statusCode + ' | ' + stamp);
 
         if (response.statusCode != 200) {
